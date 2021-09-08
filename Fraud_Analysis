@@ -1,0 +1,163 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[59]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+get_ipython().run_line_magic('matplotlib', 'inline')
+import math
+import scipy
+
+
+# In[79]:
+
+
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+
+
+# In[61]:
+
+
+df=pd.read_csv("creditcard.csv")
+df
+
+
+# In[62]:
+
+
+df_cnt=pd.value_counts(df['Class'])                     #Hightly unbalance dataset
+df_cnt
+
+
+# In[63]:
+
+
+df_cnt.plot(kind='bar',rot=0)
+
+
+# In[64]:
+
+
+df.info()
+
+
+# In[65]:
+
+
+df.describe()
+
+
+# In[66]:
+
+
+df.isnull().sum()
+
+
+# In[67]:
+
+
+fraud=df[df['Class']==1]
+normal=df[df['Class']==0]
+
+
+# In[68]:
+
+
+normal.Amount.describe()
+
+
+# In[69]:
+
+
+fraud.Amount.describe()
+
+
+# In[70]:
+
+
+df.groupby('Class').mean()
+
+
+# In[71]:
+
+
+normal_sample=normal.sample(n=492)
+normal_sample
+
+
+# In[72]:
+
+
+new_data=pd.concat([normal_sample,fraud],axis=0)
+new_data
+
+
+# In[73]:
+
+
+new_data['Class'].value_counts()
+
+
+# In[74]:
+
+
+new_data.groupby('Class').mean()
+
+
+# In[75]:
+
+
+X=new_data.drop('Class',axis='columns')
+Y=new_data[['Class']]
+
+
+# In[78]:
+
+
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.2,stratify=Y, random_state=2)
+
+
+# In[84]:
+
+
+model=LogisticRegression()
+
+
+# In[85]:
+
+
+model.fit(X_train,Y_train)
+
+
+# In[90]:
+
+
+pred=model.predict(X_train)
+pred
+
+
+# In[93]:
+
+
+acc=accuracy_score(pred,Y_train)
+acc
+
+
+# In[94]:
+
+
+pred_test=model.predict(X_test)
+pred_test
+
+
+# In[96]:
+
+
+acc_test=accuracy_score(pred_test,Y_test)
+acc_test
+
