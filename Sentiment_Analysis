@@ -1,0 +1,96 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[29]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+get_ipython().run_line_magic('matplotlib', 'inline')
+import math
+import string
+import nltk
+
+
+# In[35]:
+
+
+nltk.download('stopwords')
+
+
+# In[30]:
+
+
+df=pd.read_csv("IMDB Dataset.csv")
+df
+
+
+# In[31]:
+
+
+from sklearn.preprocessing import LabelEncoder
+le= LabelEncoder()
+
+
+# In[32]:
+
+
+df['sentiments_code']=le.fit_transform(df.sentiment)
+df
+
+
+# In[34]:
+
+
+from sklearn.feature_extraction.text import CountVectorizer
+vect=CountVectorizer()
+
+
+# In[39]:
+
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+tfidf=TfidfVectorizer()
+
+
+# In[46]:
+
+
+Y=df.sentiments_code
+X=tfidf.fit_transform(df['review'].values.astype('U'))
+
+
+# In[47]:
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+model=LogisticRegression()
+
+
+# In[48]:
+
+
+X_train,X_test,Y_train,Y_test=train_test_split(X,Y,test_size=0.3)
+
+
+# In[50]:
+
+
+model.fit(X_train,Y_train)
+
+
+# In[52]:
+
+
+pred=model.predict(X_test)
+pred
+
+
+# In[ ]:
+
+
+
+
