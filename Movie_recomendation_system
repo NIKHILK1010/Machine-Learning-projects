@@ -1,0 +1,132 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# In[2]:
+
+
+df=pd.read_csv('tmdb_5000_movies.csv')
+df
+
+
+# In[3]:
+
+
+df.isnull().sum()
+
+
+# In[4]:
+
+
+df.columns
+
+
+# In[5]:
+
+
+df=df.drop(['homepage','tagline','release_date'],axis='columns')
+df
+
+
+# In[6]:
+
+
+df.isnull().sum()
+
+
+# In[7]:
+
+
+mean=df['runtime'].mean()
+mean
+
+
+# In[8]:
+
+
+df.runtime=df.runtime.fillna(mean)
+df.isnull().sum()
+
+
+# In[9]:
+
+
+df.overview=df.overview.fillna('true')
+df.isnull().sum()
+
+
+# In[10]:
+
+
+df.head()
+
+
+# In[11]:
+
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+tfidf=TfidfVectorizer(min_df=3,analyzer='word',stop_words='english',ngram_range=(1, 13))
+tf_matrix=tfidf.fit_transform(df['overview'])
+tf_matrix.shape
+                      
+
+
+# In[12]:
+
+
+from sklearn.metrics.pairwise import sigmoid_kernel
+sgm=sigmoid_kernel(tf_matrix,tf_matrix)
+sgm
+
+
+# In[13]:
+
+
+indices=pd.Series(df.index,index=df['original_title']).drop_duplicates()
+indices
+
+
+# In[14]:
+
+
+indices['Spectre']
+
+
+# In[24]:
+
+
+def recommend(name,sgm=sgm):
+    idx=indices[name]
+    movie_score=list(enumerate(sgm[idx]))
+    movie_score=sorted(movie_score,key=lambda x:x[1],reverse=True)
+    top_movies=movie_score[1:11]
+    movie_indices=[i[0] for i in top_movies]
+    return df['original_title'].iloc[movie_indices]
+
+
+# In[25]:
+
+
+recommend('Spectre')
+
+
+# In[27]:
+
+
+recommend('The Living Daylights')
+
+
+# In[ ]:
+
+
+
+
