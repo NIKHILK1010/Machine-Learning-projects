@@ -1,0 +1,18 @@
+    import pandas as pd
+from sklearn.linear_model import LinearRegression
+import matplotlib.pylab as plt
+model=LinearRegression()
+
+x=pd.read_csv("nik9.csv")
+df=pd.DataFrame(x)
+model.fit(df[['version']],df[['price']])
+plt.scatter(df['version'],df['price'])
+print(model.predict([[10]]))
+print(model.predict([[40]]))
+
+plt.xlabel("version")
+plt.ylabel("price")
+plt.grid(axis='both')
+plt.show()
+
+    
